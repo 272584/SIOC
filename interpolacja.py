@@ -1,34 +1,31 @@
 import numpy as np
-from scipy.signal import convolve
 import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error
-
-def sin_function(x):
+from scipy.interpolate import interp1d
+     
+def f1(x):
     return np.sin(x)
+N = 100
+x = np.linspace(-np.pi, np.pi, N)
+y = f1(x)
 
-sampling_frequency = 100
+N_interp = 4 * N
+x_new = np.linspace(-np.pi, np.pi, N_interp)
 
-x = np.linspace(-2 * np.pi, 2 * np.pi, 10 * sampling_frequency)
-y = sin_function(x)
+linear_interpolator = interp1d(x, y, kind='linear')
+y_interpolated_linear = linear_interpolator(x_new)
 
-kernel_size = int(1 / ((2*np.pi)/100))
-kernel = np.ones(kernel_size) / kernel_size
-h1_kernel = np.ones(kernel_size)
+cubic_interpolator = interp1d(x, y, kind='cubic')
+y_interpolated_cubic = cubic_interpolator(x_new)
 
-y_convolved = convolve(y, kernel, mode='same')
-
-y_convolved = convolve(y, h1_kernel, mode='same') / kernel_size
-
-mse = mean_squared_error(y, y_convolved)
-
-print(mse)
+mse_linear = np.mean((f1(x_new) - y_interpolated_linear) ** 2)
+mse_cubic = np.mean((f1(x_new) - y_interpolated_cubic) ** 2)
 
 plt.figure(figsize=(14, 7))
-plt.plot(x, y, label='Original sin(x)')
-plt.plot(x, y_convolved, label='Convolved sin(x) with h1(x)', linestyle='dashed')
-plt.legend()
-plt.title('Convolution of sin(x) with kernel h1(x)')
-plt.xlabel('x')
-plt.ylabel('Amplitude')
 plt.grid(True)
+plt.plot(x, y, 'o', label='Oryginalne punkty')
+plt.plot(x_new, y_interpolated_linear, '-', label='Interpolacja liniowa')
+plt.legend()
+
 plt.show()
+
+print(mse_linear,mse_cubic)
