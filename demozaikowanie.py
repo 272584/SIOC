@@ -7,7 +7,6 @@ def apply_convolution(channel, kernel):
 
 image = np.load('pandas.npy')
 
-# Stworzenie masek za pomocą funkcji np.indices
 idx_x, idx_y = np.indices(image.shape[:2])
 mask_R = (idx_x % 2 == 0) & (idx_y % 2 != 0)
 mask_G1 = (idx_x % 2 == 0) & (idx_y % 2 == 0)
@@ -19,7 +18,6 @@ masked_image[:, :, 0] = image[:, :, 0] * mask_R
 masked_image[:, :, 1] = image[:, :, 1] * (mask_G1 + mask_G2)
 masked_image[:, :, 2] = image[:, :, 2] * mask_B
 
-# Stosowanie lekko zmodyfikowanych kerneli
 kernel_R = np.array([[0, 0.4, 0], [0.4, 1, 0.4], [0, 0.4, 0]])
 kernel_G = np.array([[0, 0.2, 0], [0.2, 1, 0.2], [0, 0.2, 0]])
 kernel_B = np.array([[0, 0.4, 0], [0.4, 1, 0.4], [0, 0.4, 0]])
@@ -40,7 +38,6 @@ B_conv = apply_convolution(masked_image[:, :, 2], kernel)
 
 convoluted_image = np.clip(np.dstack((R_conv, G_conv, B_conv)), 0, 1)
 
-# Wyświetlenie wyników
 fig, axs = plt.subplots(1, 3, figsize=(15, 5))
 axs[0].imshow(masked_image)
 axs[0].set_title('Image with Bayer GRBG Mask')
